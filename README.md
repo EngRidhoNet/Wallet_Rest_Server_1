@@ -1,6 +1,3 @@
-Berikut adalah format lengkap `README.md` sesuai permintaan Anda:
-
-```markdown
 # Wallet & Authentication API Documentation
 
 ## Introduction
