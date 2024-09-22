@@ -46,7 +46,7 @@
                                         <i class="bi bi-wallet2"></i>
                                     </div>
                                     <div class="ps-3">
-                                        <h6>$balance</h6>
+                                        <h6 id="wallet-balance">$0.00</h6> <!-- Ini akan diperbarui dengan JavaScript -->
                                         <span class="text-muted small pt-2 ps-1">Available balance</span>
                                     </div>
                                 </div>
@@ -71,7 +71,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    {{-- <tr>
                                         <td>1</td>
                                         <td>101</td>
                                         <td>500.00</td>
@@ -94,7 +94,7 @@
                                         <td>Payment</td>
                                         <td>2024-09-19 08:30:12</td>
                                         <td>2024-09-19 09:10:05</td>
-                                    </tr>
+                                    </tr> --}}
                                 </tbody>
                             </table>
                         </div>
@@ -104,4 +104,40 @@
             </div>
         </div>
     </section>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const userId = {!! json_encode(auth()->id()) !!};
+
+        function fetchUserWallet() {
+            $.ajax({
+                url: `/api/wallet/${userId}`,
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(wallet) {
+                    console.log(wallet);
+                    updateWalletDisplay(wallet);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching wallet:", error);
+                    alert("Gagal memuat informasi dompet. Silakan coba lagi.");
+                }
+            });
+        }
+
+        function updateWalletDisplay(wallet) {
+            const balanceElement = document.getElementById('wallet-balance');
+            const balance = parseFloat(wallet.balance); // Konversi string ke float
+
+            if (!isNaN(balance)) {
+            balanceElement.innerHTML = `Rp${balance.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`; // Tampilkan dengan format Rupiah
+            } else {
+            balanceElement.innerHTML = `Rp0,00`; // Tampilkan 0 jika konversi gagal
+            }
+        }
+
+        fetchUserWallet(); // Panggil fungsi untuk memuat data saat halaman dimuat.
+    </script>
 @endsection

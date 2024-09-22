@@ -35,4 +35,13 @@ class WalletController extends Controller
         $wallet->save();
         return response()->json($wallet,200);
     }
+
+    public function createWallet(Request $request)
+    {
+        $wallet = new Wallet();
+        $wallet->user_id = $request->user_id;
+        $wallet->balance = $request->has('initial_balance') ? $request->initial_balance : 0;
+        $wallet->save();
+        return response()->json($wallet, 201); // 201 menandakan bahwa resource berhasil dibuat
+    }
 }

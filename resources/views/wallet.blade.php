@@ -12,7 +12,6 @@
             </ol>
         </nav>
     </div>
-
     <section class="section dashboard">
         <div class="row">
             <div class="col-lg-12"> <!-- Full width -->
@@ -137,13 +136,50 @@
             </div>
         </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function() {
             const userId = {!! json_encode(auth()->id()) !!};
-            console.log(userId);
+            // console.log(userId);
             // Fetch user's wallet
+
+            $(document).ready(function() {
+                $('#walletForm').on('submit', function(e) {
+                    e.preventDefault();
+                    createWallet();
+                });
+            });
+
+            function createWallet() {
+                var walletId = $('#walletId').val();
+                var balance = $('#balance').val();
+
+                $.ajax({
+                    url: walletId ? '/api/wallet/update/' + walletId : '/api/wallet/create',
+                    method: walletId ? 'PUT' : 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: {
+                        user_id: userId, // Ensure userId is defined globally or pass it to the function
+                        balance: balance
+                    },
+                    success: function(wallet) {
+                        fetchUserWallet(); // Ensure this function is defined
+                        $('#walletModal').modal('hide');
+                        alert(walletId ? "Dompet berhasil diperbarui!" :
+                        "Dompet berhasil ditambahkan!");
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error creating/updating wallet:", error);
+                        alert(walletId ? "Gagal memperbarui dompet. Silakan coba lagi." :
+                            "Gagal menambahkan dompet. Silakan coba lagi.");
+                    }
+                });
+            }
+
             function fetchUserWallet() {
                 $.ajax({
                     url: `/api/wallet/${userId}`,
@@ -212,10 +248,6 @@
                     }
                 });
             });
-
-
-
-
             // Withdraw
             $(document).on('click', '.withdrawBtn', function() {
                 $('#withdrawModal').modal('show');

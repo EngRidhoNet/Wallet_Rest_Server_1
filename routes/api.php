@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/wallet/deposit', [WalletController::class, 'deposit']);
     Route::post('/wallet/withdraw', [WalletController::class, 'withdraw']);
     Route::post('/wallet/pay', [WalletController::class, 'pay']);
+    Route::post('/wallet/create', [WalletController::class, 'createWallet']);
 });
 
 // Authentication Routes
